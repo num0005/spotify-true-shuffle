@@ -25,6 +25,22 @@ function ui_render_play_button(tag, enabled = true) {
 }
 
 /**
+ * Renders the "Save Results" button in the main application with the specified tag, enabled and display.
+ *
+ * @param {String} tag
+ * @param {Boolean} enabled
+ * @param {Boolean} display
+ */
+function ui_render_save_button(tag, enabled = true, display = true) {
+    const button = document.getElementById('save_results');
+    button.innerText = tag;
+    button.disabled = !enabled;
+    button.classList[enabled ? 'remove' : 'add']('disabled');
+    button.display = !display;
+    button.style.display = display ? '' : 'none';
+}
+
+/**
  * Renders the application message under the play button with specified content.
  *
  * @param {String} content
@@ -36,36 +52,22 @@ function ui_render_application_message(content, enabled = true) {
     text.setAttribute('style', enabled ? '' : 'display: none');
 }
 
-const MONTH_NAMES = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-];
-
-function ui_render_queued_songs(songs) {
+function ui_render_queued_songs(songs, is_premium) {
     // Render the queued tracks into the results container
     document.getElementById('shuffle_results').innerHTML = songs
-        .map(({ index, name, artists, image, release_date }) => {
+        .map(({ id, index, name, artists, image, release_date }) => {
             const [year, month, day] = release_date.split('-');
             const released_on = `${MONTH_NAMES[month - 1]} ${day}, ${year}`;
             return `
                 <div class="row mt-3">
-                    <div class="song-element">
+                    <div track-id="${id}" class="song-element ${is_premium ? 'playable' : ''}">
                         ${image ? `<img class="song-image" src="${image}" />` : ''}
                         <p class="song-title">
                             #${index + 1} - ${name}
                             <br />
                             <strong class="song-subtitle">${artists.join(', ')} - Released On ${released_on}</strong>
                         </p>
+                        <div class="song-action-play"></div>
                     </div>
                 </div>`;
         })
